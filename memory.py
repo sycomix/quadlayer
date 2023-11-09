@@ -26,12 +26,11 @@ class Memory:
         :return: List of messages
         """
 
-        messages = self.redis_client.get(chat_id)
-        if messages:
+        if messages := self.redis_client.get(chat_id):
             messages = unpackb(messages)
             # If total_tokens length is greater than max_tokens, remove the
             # oldest messages until it's not
-            total_tokens = sum([message["content_tokens"] for message in messages])
+            total_tokens = sum(message["content_tokens"] for message in messages)
             while total_tokens > self.max_tokens:
                 logger.debug(
                     "Removing oldest message",
@@ -41,7 +40,7 @@ class Memory:
                     message=messages[0],
                 )
                 messages.pop(0)
-                total_tokens = sum([message["content_tokens"] for message in messages])
+                total_tokens = sum(message["content_tokens"] for message in messages)
 
             # Update redis
             self.redis_client.set(chat_id, packb(messages))
@@ -77,8 +76,7 @@ class Memory:
         :param user_id: User ID
         :return: User profile
         """
-        profile = self.redis_client.get(f"profile_{user_id}")
-        if profile:
+        if profile := self.redis_client.get(f"profile_{user_id}"):
             return unpackb(profile)
 
         return {}
