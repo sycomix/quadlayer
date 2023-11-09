@@ -17,56 +17,6 @@ class Plugins:
     """
 
     def __init__(self):
-        search_plugin = {
-            "name": "search",
-            "description": "Search using search engine, useful when requires recent knowledge",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "Query to search",
-                    },
-                },
-                "required": ["query"],
-            },
-        }
-
-        notes_plugin = [
-            {
-                "name": "create_note",
-                "description": "Create a note, returns note ID",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "title": {
-                            "type": "string",
-                            "description": "Note title",
-                        },
-                        "content": {
-                            "type": "string",
-                            "description": "Note content",
-                        },
-                    },
-                    "required": ["title", "content"],
-                },
-            },
-            {
-                "name": "retrieve_note",
-                "description": "Retrieve a note, returns note contents",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "query": {
-                            "type": "string",
-                            "description": "Query to search (e.g. note title or topic)",
-                        },
-                    },
-                    "required": ["query"],
-                },
-            },
-        ]
-
         self.plugins = []
         self.plugins_map = {}
 
@@ -75,11 +25,61 @@ class Plugins:
 
         if self.bing_api_key:
             logger.debug("Bing API key found, enabling search plugin")
+            search_plugin = {
+                "name": "search",
+                "description": "Search using search engine, useful when requires recent knowledge",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "Query to search",
+                        },
+                    },
+                    "required": ["query"],
+                },
+            }
+
             self.plugins.append(search_plugin)
             self.plugins_map["search"] = self.search
 
         if self.use_chroma:
             logger.debug("ChromaDB enabled, enabling notes plugin")
+            notes_plugin = [
+                {
+                    "name": "create_note",
+                    "description": "Create a note, returns note ID",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "description": "Note title",
+                            },
+                            "content": {
+                                "type": "string",
+                                "description": "Note content",
+                            },
+                        },
+                        "required": ["title", "content"],
+                    },
+                },
+                {
+                    "name": "retrieve_note",
+                    "description": "Retrieve a note, returns note contents",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {
+                                "type": "string",
+                                "description": "Query to search (e.g. note title or topic)",
+                            },
+                        },
+                        "required": ["query"],
+                    },
+                },
+            ]
+
             self.plugins.extend(notes_plugin)
             self.plugins_map["create_note"] = self.create_note
             self.plugins_map["retrieve_note"] = self.retrieve_note
